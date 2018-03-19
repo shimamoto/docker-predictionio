@@ -1,10 +1,10 @@
 FROM ubuntu
 MAINTAINER shimamoto
 
-ENV PIO_VERSION 0.12.0-incubating
-ENV SPARK_VERSION 2.1.1
+ENV PIO_VERSION 0.12.1
+ENV SPARK_VERSION 2.2.1
 ENV HADOOP_VERSION hadoop2.7
-ENV ELASTICSEARCH_VERSION 5.5.2
+ENV ELASTICSEARCH_VERSION 5.6.8
 ENV HBASE_VERSION 1.0.0
 
 ENV PIO_HOME /PredictionIO-${PIO_VERSION}
@@ -16,14 +16,14 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN curl -O https://dist.apache.org/repos/dist/release/incubator/predictionio/${PIO_VERSION}/apache-predictionio-${PIO_VERSION}-bin.tar.gz \
+RUN curl -O http://apache.cs.utah.edu/predictionio/${PIO_VERSION}/apache-predictionio-${PIO_VERSION}-bin.tar.gz \
     && tar -xvzf apache-predictionio-${PIO_VERSION}-bin.tar.gz -C / \
     && rm apache-predictionio-${PIO_VERSION}-bin.tar.gz
 
 RUN mkdir ${PIO_HOME}/vendors
 COPY files/pio-env.sh ${PIO_HOME}/conf/pio-env.sh
 
-RUN curl -O http://d3kbcqa49mib13.cloudfront.net/spark-${SPARK_VERSION}-bin-${HADOOP_VERSION}.tgz \
+RUN curl -O http://apache.cs.utah.edu/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-${HADOOP_VERSION}.tgz \
     && tar -xvzf spark-${SPARK_VERSION}-bin-${HADOOP_VERSION}.tgz -C ${PIO_HOME}/vendors \
     && rm spark-${SPARK_VERSION}-bin-${HADOOP_VERSION}.tgz
 
