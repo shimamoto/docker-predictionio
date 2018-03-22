@@ -16,6 +16,10 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+RUN pip install --upgrade pip \
+    && pip install setuptools \
+    && pip install predictionio
+
 RUN curl -O http://apache.cs.utah.edu/predictionio/${PIO_VERSION}/apache-predictionio-${PIO_VERSION}-bin.tar.gz \
     && tar -xvzf apache-predictionio-${PIO_VERSION}-bin.tar.gz -C / \
     && rm apache-predictionio-${PIO_VERSION}-bin.tar.gz
