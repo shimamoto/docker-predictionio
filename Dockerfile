@@ -20,14 +20,14 @@ RUN pip install --upgrade pip \
     && pip install setuptools \
     && pip install predictionio
 
-RUN curl -O http://apache.cs.utah.edu/predictionio/${PIO_VERSION}/apache-predictionio-${PIO_VERSION}-bin.tar.gz \
+RUN curl -O https://archive.apache.org/dist/predictionio/${PIO_VERSION}/apache-predictionio-${PIO_VERSION}-bin.tar.gz \
     && tar -xvzf apache-predictionio-${PIO_VERSION}-bin.tar.gz -C / \
     && rm apache-predictionio-${PIO_VERSION}-bin.tar.gz
 
 RUN mkdir ${PIO_HOME}/vendors
 COPY files/pio-env.sh ${PIO_HOME}/conf/pio-env.sh
 
-RUN curl -O http://apache.cs.utah.edu/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-${HADOOP_VERSION}.tgz \
+RUN curl -O https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-${HADOOP_VERSION}.tgz \
     && tar -xvzf spark-${SPARK_VERSION}-bin-${HADOOP_VERSION}.tgz -C ${PIO_HOME}/vendors \
     && rm spark-${SPARK_VERSION}-bin-${HADOOP_VERSION}.tgz
 
