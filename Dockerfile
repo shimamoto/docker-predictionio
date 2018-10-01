@@ -1,7 +1,7 @@
 FROM ubuntu
 MAINTAINER shimamoto
 
-ENV PIO_VERSION 0.12.1
+ENV PIO_VERSION 0.13.0
 ENV SPARK_VERSION 2.2.1
 ENV HADOOP_VERSION hadoop2.7
 ENV ELASTICSEARCH_VERSION 5.6.8
@@ -12,9 +12,13 @@ ENV PATH=${PIO_HOME}/bin:$PATH
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 
 RUN apt-get update \
-    && apt-get install -y --auto-remove --no-install-recommends curl git vim openjdk-8-jdk libgfortran3 python-pip \
+    && apt-get install -y --auto-remove --no-install-recommends curl git vim openjdk-8-jdk libgfortran3 python \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
+    && python get-pip.py \
+    && rm get-pip.py
 
 RUN pip install --upgrade pip \
     && pip install setuptools \
