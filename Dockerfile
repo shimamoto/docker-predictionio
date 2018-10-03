@@ -2,7 +2,7 @@ FROM ubuntu
 MAINTAINER shimamoto
 
 ENV PIO_VERSION 0.13.0
-ENV SPARK_VERSION 2.2.1
+ENV SPARK_VERSION 2.3.2
 ENV HADOOP_VERSION hadoop2.7
 ENV ELASTICSEARCH_VERSION 5.6.12
 ENV HBASE_VERSION 1.0.0
@@ -24,9 +24,15 @@ RUN pip install --upgrade pip \
     && pip install setuptools \
     && pip install predictionio
 
-RUN curl -O https://archive.apache.org/dist/predictionio/${PIO_VERSION}/apache-predictionio-${PIO_VERSION}-bin.tar.gz \
-    && tar -xvzf apache-predictionio-${PIO_VERSION}-bin.tar.gz -C / \
-    && rm apache-predictionio-${PIO_VERSION}-bin.tar.gz
+RUN curl -O https://archive.apache.org/dist/predictionio/${PIO_VERSION}/apache-predictionio-${PIO_VERSION}.tar.gz \
+    && mkdir /apache-predictionio-${PIO_VERSION} \
+    && tar -xvzf apache-predictionio-${PIO_VERSION}.tar.gz -C /apache-predictionio-${PIO_VERSION} \
+    && rm apache-predictionio-${PIO_VERSION}.tar.gz \
+    && cd apache-predictionio-${PIO_VERSION} \
+    && ./make-distribution.sh -Dspark.version=${SPARK_VERSION}
+
+RUN tar zxvf /apache-predictionio-${PIO_VERSION}/PredictionIO-${PIO_VERSION}.tar.gz -C / \
+    && rm -r /apache-predictionio-${PIO_VERSION}
 
 RUN mkdir ${PIO_HOME}/vendors
 COPY files/pio-env.sh ${PIO_HOME}/conf/pio-env.sh
