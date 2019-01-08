@@ -20,34 +20,30 @@ RUN curl -O https://archive.apache.org/dist/predictionio/${PIO_VERSION}/apache-p
     && mkdir /apache-predictionio-${PIO_VERSION} \
     && tar -xvzf apache-predictionio-${PIO_VERSION}.tar.gz -C /apache-predictionio-${PIO_VERSION} \
     && rm apache-predictionio-${PIO_VERSION}.tar.gz \
-    && cd apache-predictionio-${PIO_VERSION} \
-    && ./make-distribution.sh -Dspark.version=${SPARK_VERSION}
-
-RUN tar zxvf /apache-predictionio-${PIO_VERSION}/PredictionIO-${PIO_VERSION}.tar.gz -C / \
-    && rm -r /apache-predictionio-${PIO_VERSION}
-
-RUN mkdir ${PIO_HOME}/vendors
-COPY files/pio-env.sh ${PIO_HOME}/conf/pio-env.sh
-
-RUN curl -O https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-${HADOOP_VERSION}.tgz \
+    && ./apache-predictionio-${PIO_VERSION}/make-distribution.sh -Dspark.version=${SPARK_VERSION} \
+    && tar zxvf /apache-predictionio-${PIO_VERSION}/PredictionIO-${PIO_VERSION}.tar.gz -C / \
+    && rm -r /apache-predictionio-${PIO_VERSION} \
+    && rm -r /root/.ivy2 \
+    && mkdir ${PIO_HOME}/vendors \
+    && curl -O https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-${HADOOP_VERSION}.tgz \
     && tar -xvzf spark-${SPARK_VERSION}-bin-${HADOOP_VERSION}.tgz -C ${PIO_HOME}/vendors \
-    && rm spark-${SPARK_VERSION}-bin-${HADOOP_VERSION}.tgz
-
-RUN curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ELASTICSEARCH_VERSION}.tar.gz \
+    && rm spark-${SPARK_VERSION}-bin-${HADOOP_VERSION}.tgz \
+    && curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ELASTICSEARCH_VERSION}.tar.gz \
     && tar -xvzf elasticsearch-${ELASTICSEARCH_VERSION}.tar.gz -C ${PIO_HOME}/vendors \
     && rm elasticsearch-${ELASTICSEARCH_VERSION}.tar.gz \
     && echo 'cluster.name: predictionio' >> ${PIO_HOME}/vendors/elasticsearch-${ELASTICSEARCH_VERSION}/config/elasticsearch.yml \
-    && echo 'network.host: 127.0.0.1' >> ${PIO_HOME}/vendors/elasticsearch-${ELASTICSEARCH_VERSION}/config/elasticsearch.yml
-
-RUN curl -O http://archive.apache.org/dist/hbase/hbase-${HBASE_VERSION}/hbase-${HBASE_VERSION}-bin.tar.gz \
+    && echo 'network.host: 127.0.0.1' >> ${PIO_HOME}/vendors/elasticsearch-${ELASTICSEARCH_VERSION}/config/elasticsearch.yml \
+    && curl -O http://archive.apache.org/dist/hbase/hbase-${HBASE_VERSION}/hbase-${HBASE_VERSION}-bin.tar.gz \
     && tar -xvzf hbase-${HBASE_VERSION}-bin.tar.gz -C ${PIO_HOME}/vendors \
     && rm hbase-${HBASE_VERSION}-bin.tar.gz
+
+COPY files/pio-env.sh ${PIO_HOME}/conf/pio-env.sh
 COPY files/hbase-site.xml ${PIO_HOME}/vendors/hbase-${HBASE_VERSION}/conf/hbase-site.xml
+
 RUN sed -i "s|VAR_PIO_HOME|${PIO_HOME}|" ${PIO_HOME}/vendors/hbase-${HBASE_VERSION}/conf/hbase-site.xml \
-    && sed -i "s|VAR_HBASE_VERSION|${HBASE_VERSION}|" ${PIO_HOME}/vendors/hbase-${HBASE_VERSION}/conf/hbase-site.xml
+    && sed -i "s|VAR_HBASE_VERSION|${HBASE_VERSION}|" ${PIO_HOME}/vendors/hbase-${HBASE_VERSION}/conf/hbase-site.xml \
+    && addgroup pio \
+    && adduser -D pio -G pio \
+    && chown -R pio:pio ${PIO_HOME}
 
-#RUN addgroup -g 999 pio \
-#    && adduser -D -u 999 -G pio pio \
-#    && chown -R pio:pio ${PIO_HOME}
-
-#USER pio
+USER pio
