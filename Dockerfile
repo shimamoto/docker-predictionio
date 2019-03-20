@@ -1,11 +1,11 @@
 FROM alpine:3.8
 MAINTAINER shimamoto
 
-ENV PIO_VERSION 0.13.0
-ENV SPARK_VERSION 2.3.2
+ENV PIO_VERSION 0.14.0
+ENV SPARK_VERSION 2.4.0
 ENV HADOOP_VERSION hadoop2.7
-ENV ELASTICSEARCH_VERSION 5.6.14
-ENV HBASE_VERSION 1.0.0
+ENV ELASTICSEARCH_VERSION 6.6.2
+ENV HBASE_VERSION 1.2.11
 
 ENV PIO_HOME /PredictionIO-${PIO_VERSION}
 ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk
@@ -20,7 +20,7 @@ RUN curl -O https://archive.apache.org/dist/predictionio/${PIO_VERSION}/apache-p
     && mkdir /apache-predictionio-${PIO_VERSION} \
     && tar -xvzf apache-predictionio-${PIO_VERSION}.tar.gz -C /apache-predictionio-${PIO_VERSION} \
     && rm apache-predictionio-${PIO_VERSION}.tar.gz \
-    && ./apache-predictionio-${PIO_VERSION}/make-distribution.sh -Dspark.version=${SPARK_VERSION} \
+    && ./apache-predictionio-${PIO_VERSION}/make-distribution.sh -Dspark.version=${SPARK_VERSION} -Delasticsearch.version=${ELASTICSEARCH_VERSION} -Dhbase.version=${HBASE_VERSION} \
     && tar zxvf /apache-predictionio-${PIO_VERSION}/PredictionIO-${PIO_VERSION}.tar.gz -C / \
     && rm -r /apache-predictionio-${PIO_VERSION} \
     && rm -r /root/.ivy2 \
